@@ -26,17 +26,18 @@ std::string appendPath(const std::string& path, const std::string& fileName) {
   result += fileName;
   return result;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 }
 
 namespace std {
 bool operator<(const Crypto::Hash& hash1, const Crypto::Hash& hash2) {
   return memcmp(&hash1, &hash2, Crypto::HASH_SIZE) < 0;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool operator<(const Crypto::KeyImage& keyImage1, const Crypto::KeyImage& keyImage2) {
   return memcmp(&keyImage1, &keyImage2, 32) < 0;
 }
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 }
 
 #define CURRENT_BLOCKCACHE_STORAGE_ARCHIVE_VER 3
@@ -53,7 +54,7 @@ template<typename K, typename V, typename Hash>
 bool serialize(google::sparse_hash_map<K, V, Hash>& value, Common::StringView name, CryptoNote::ISerializer& serializer) {
   return serializeMap(value, name, serializer, [&value](size_t size) { value.resize(size); });
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 template<typename K, typename Hash>
 bool serialize(google::sparse_hash_set<K, Hash>& value, Common::StringView name, CryptoNote::ISerializer& serializer) {
   size_t size = value.size();
@@ -77,7 +78,7 @@ bool serialize(google::sparse_hash_set<K, Hash>& value, Common::StringView name,
   serializer.endArray();
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 // custom serialization to speedup cache loading
 bool serialize(std::vector<std::pair<Blockchain::TransactionIndex, uint16_t>>& value, Common::StringView name, CryptoNote::ISerializer& s) {
   const size_t elementSize = sizeof(std::pair<Blockchain::TransactionIndex, uint16_t>);
@@ -101,15 +102,16 @@ bool serialize(std::vector<std::pair<Blockchain::TransactionIndex, uint16_t>>& v
   s.endArray();
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void serialize(Blockchain::TransactionIndex& value, ISerializer& s) {
   s(value.block, "block");
   s(value.transaction, "tx");
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 class BlockCacheSerializer {
 
 public:
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
   BlockCacheSerializer(Blockchain& bs, const Crypto::Hash lastBlockHash, ILogger& logger) :
     m_bs(bs), m_lastBlockHash(lastBlockHash), m_loaded(false), logger(logger, "BlockCacheSerializer") {
   }
@@ -128,7 +130,7 @@ public:
       logger(WARNING) << "loading failed: " << e.what();
     }
   }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
   bool save(const std::string& filename) {
     try {
       std::ofstream file(filename, std::ios::binary);
@@ -145,7 +147,7 @@ public:
 
     return true;
   }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
   void serialize(ISerializer& s) {
     auto start = std::chrono::steady_clock::now();
 
@@ -196,12 +198,13 @@ public:
 
     m_loaded = true;
   }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
   bool loaded() const {
     return m_loaded;
   }
 
 private:
+
   LoggerRef logger;
   bool m_loaded;
   Blockchain& m_bs;
@@ -211,10 +214,11 @@ private:
 class BlockchainIndicesSerializer {
 
 public:
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
   BlockchainIndicesSerializer(Blockchain& bs, const Crypto::Hash lastBlockHash, ILogger& logger) :
     m_bs(bs), m_lastBlockHash(lastBlockHash), m_loaded(false), logger(logger, "BlockchainIndicesSerializer") {
   }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
   void serialize(ISerializer& s) {
     uint8_t version = CURRENT_BLOCKCHAININDICES_STORAGE_ARCHIVE_VER;
 
@@ -253,7 +257,7 @@ public:
 
     m_loaded = true;
   }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
   template<class Archive> void serialize(Archive& ar, unsigned int version) {
 
     // ignore old versions, do rebuild
@@ -286,12 +290,13 @@ public:
 
     m_loaded = true;
   }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
   bool loaded() const {
     return m_loaded;
   }
 
 private:
+
   LoggerRef logger;
   bool m_loaded;
   Blockchain& m_bs;
@@ -319,19 +324,19 @@ Blockchain::Blockchain(const Currency& currency, tx_memory_pool& tx_pool, ILogge
   Crypto::KeyImage nullImage = boost::value_initialized<decltype(nullImage)>();
   m_spent_keys.set_deleted_key(nullImage);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::addObserver(IBlockchainStorageObserver* observer) {
   return m_observerManager.add(observer);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::removeObserver(IBlockchainStorageObserver* observer) {
   return m_observerManager.remove(observer);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::checkTransactionInputs(const CryptoNote::Transaction& tx, BlockInfo& maxUsedBlock) {
   return checkTransactionInputs(tx, maxUsedBlock.height, maxUsedBlock.id) && check_tx_outputs(tx);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::checkTransactionInputs(const CryptoNote::Transaction& tx, BlockInfo& maxUsedBlock, BlockInfo& lastFailed) {
 
   BlockInfo tail;
@@ -369,11 +374,11 @@ bool Blockchain::checkTransactionInputs(const CryptoNote::Transaction& tx, Block
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::haveSpentKeyImages(const CryptoNote::Transaction& tx) {
   return this->haveTransactionKeyImagesAsSpent(tx);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 /**
 * \pre m_blockchain_lock is locked
 */
@@ -387,22 +392,22 @@ bool Blockchain::checkTransactionSize(size_t blobSize) {
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::haveTransaction(const Crypto::Hash &id) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return m_transactionMap.find(id) != m_transactionMap.end();
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::have_tx_keyimg_as_spent(const Crypto::KeyImage &key_im) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return  m_spent_keys.find(key_im) != m_spent_keys.end();
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 uint32_t Blockchain::getCurrentBlockchainHeight() {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return static_cast<uint32_t>(m_blocks.size());
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::init(const std::string& config_folder, bool load_existing) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   if (!config_folder.empty() && !Tools::create_directories_if_necessary(config_folder)) {
@@ -500,7 +505,7 @@ bool Blockchain::init(const std::string& config_folder, bool load_existing) {
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void Blockchain::rebuildCache() {
   logger(INFO, BRIGHT_WHITE) << "Rebuilding cache";
 
@@ -555,7 +560,7 @@ void Blockchain::rebuildCache() {
   std::chrono::duration<double> duration = std::chrono::steady_clock::now() - timePoint;
   logger(INFO, BRIGHT_WHITE) << "Rebuilding internal structures took: " << duration.count();
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::storeCache() {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
@@ -568,7 +573,7 @@ bool Blockchain::storeCache() {
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::deinit() {
   storeCache();
   if (m_blockchainIndexesEnabled) {
@@ -577,7 +582,7 @@ bool Blockchain::deinit() {
   assert(m_messageQueueList.empty());
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::resetAndSetGenesisBlock(const Block& b) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   m_blocks.clear();
@@ -597,31 +602,31 @@ bool Blockchain::resetAndSetGenesisBlock(const Block& b) {
   addNewBlock(b, bvc);
   return bvc.m_added_to_main_chain && !bvc.m_verification_failed;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 Crypto::Hash Blockchain::getTailId(uint32_t& height) {
   assert(!m_blocks.empty());
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   height = getCurrentBlockchainHeight() - 1;
   return getTailId();
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 Crypto::Hash Blockchain::getTailId() {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return m_blocks.empty() ? NULL_HASH : m_blockIndex.getTailId();
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 std::vector<Crypto::Hash> Blockchain::buildSparseChain() {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   assert(m_blockIndex.size() != 0);
   return doBuildSparseChain(m_blockIndex.getTailId());
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 std::vector<Crypto::Hash> Blockchain::buildSparseChain(const Crypto::Hash& startBlockId) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   assert(haveBlock(startBlockId));
   return doBuildSparseChain(startBlockId);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 std::vector<Crypto::Hash> Blockchain::doBuildSparseChain(const Crypto::Hash& startBlockId) const {
   assert(m_blockIndex.size() != 0);
 
@@ -652,13 +657,13 @@ std::vector<Crypto::Hash> Blockchain::doBuildSparseChain(const Crypto::Hash& sta
 
   return sparseChain;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 Crypto::Hash Blockchain::getBlockIdByHeight(uint32_t height) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   assert(height < m_blockIndex.size());
   return m_blockIndex.getBlockId(height);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getBlockByHash(const Crypto::Hash& blockHash, Block& b) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
@@ -679,12 +684,12 @@ bool Blockchain::getBlockByHash(const Crypto::Hash& blockHash, Block& b) {
 
   return false;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getBlockHeight(const Crypto::Hash& blockId, uint32_t& blockHeight) {
   std::lock_guard<decltype(m_blockchain_lock)> lock(m_blockchain_lock);
   return m_blockIndex.getBlockHeight(blockId, blockHeight);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 difficulty_type Blockchain::getDifficultyForNextBlock() {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   std::vector<uint64_t> timestamps;
@@ -704,12 +709,12 @@ difficulty_type Blockchain::getDifficultyForNextBlock() {
 
   return m_currency.nextDifficulty(block_major_version, timestamps, commulative_difficulties);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 uint64_t Blockchain::getBlockTimestamp(uint32_t height) {
   assert(height < m_blocks.size());
   return m_blocks[height].bl.timestamp;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 uint64_t Blockchain::getCoinsInCirculation() {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   if (m_blocks.empty()) {
@@ -718,7 +723,7 @@ uint64_t Blockchain::getCoinsInCirculation() {
     return m_blocks.back().already_generated_coins;
   }
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 uint8_t Blockchain::getBlockMajorVersionForHeight(uint32_t height) const {
   if (height > m_upgradeDetectorv3.upgradeHeight()) {
     return m_upgradeDetectorv3.targetVersion();
@@ -728,13 +733,13 @@ uint8_t Blockchain::getBlockMajorVersionForHeight(uint32_t height) const {
     return CURRENT_BLOCK_MAJOR;
   }
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 uint64_t Blockchain::coinsEmittedAtHeight(uint64_t height) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   const auto& block = m_blocks[height];
   return block.already_generated_coins;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 difficulty_type Blockchain::difficultyAtHeight(uint64_t height) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   const auto& current = m_blocks[height];
@@ -745,7 +750,7 @@ difficulty_type Blockchain::difficultyAtHeight(uint64_t height) {
   const auto& previous = m_blocks[height - 1];
   return current.cumulative_difficulty - previous.cumulative_difficulty;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::rollback_blockchain_switching(std::list<Block> &original_chain, size_t rollback_height) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   // remove failed subchain
@@ -771,7 +776,7 @@ bool Blockchain::rollback_blockchain_switching(std::list<Block> &original_chain,
   logger(INFO, BRIGHT_WHITE) << "Rollback success.";
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::switch_to_alternative_blockchain(std::list<blocks_ext_by_hash::iterator>& alt_chain, bool discard_disconnected_chain) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
@@ -850,7 +855,7 @@ bool Blockchain::switch_to_alternative_blockchain(std::list<blocks_ext_by_hash::
   logger(INFO, BRIGHT_GREEN) << "REORGANIZE SUCCESS! on height: " << split_height << ", new blockchain size: " << m_blocks.size();
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std::list<blocks_ext_by_hash::iterator>& alt_chain, BlockEntry& bei) {
   std::vector<uint64_t> timestamps;
   std::vector<difficulty_type> commulative_difficulties;
@@ -939,7 +944,7 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
 
   return m_currency.nextDifficulty(BlockMajorVersion, timestamps, commulative_difficulties);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::prevalidate_miner_transaction(const Block& b, uint32_t height) {
 
   if (!(b.baseTransaction.inputs.size() == 1)) {
@@ -984,7 +989,7 @@ bool Blockchain::prevalidate_miner_transaction(const Block& b, uint32_t height) 
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::validate_miner_transaction(const Block& b, uint32_t height, size_t cumulativeBlockSize,
   uint64_t alreadyGeneratedCoins, uint64_t fee, uint64_t& reward, int64_t& emissionChange) {
   uint64_t minerReward = 0;
@@ -1015,7 +1020,7 @@ bool Blockchain::validate_miner_transaction(const Block& b, uint32_t height, siz
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getBackwardBlocksSize(size_t from_height, std::vector<size_t>& sz, size_t count) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   if (!(from_height < m_blocks.size())) {
@@ -1033,7 +1038,7 @@ bool Blockchain::getBackwardBlocksSize(size_t from_height, std::vector<size_t>& 
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::get_last_n_blocks_sizes(std::vector<size_t>& sz, size_t count) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   if (!m_blocks.size()) {
@@ -1042,11 +1047,11 @@ bool Blockchain::get_last_n_blocks_sizes(std::vector<size_t>& sz, size_t count) 
 
   return getBackwardBlocksSize(m_blocks.size() - 1, sz, count);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 uint64_t Blockchain::getCurrentCumulativeBlocksizeLimit() {
   return m_current_block_cumul_sz_limit;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::complete_timestamps_vector(uint64_t start_top_height, std::vector<uint64_t>& timestamps) {
   if (timestamps.size() >= m_currency.timestampCheckWindow()) {
     return true;
@@ -1073,7 +1078,7 @@ bool Blockchain::complete_timestamps_vector(uint64_t start_top_height, std::vect
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::handle_alternative_block(const Block& b, const Crypto::Hash& id, block_verification_context& bvc, bool sendNewAlternativeBlockMessage) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
@@ -1272,7 +1277,7 @@ bool Blockchain::handle_alternative_block(const Block& b, const Crypto::Hash& id
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getBlocks(uint32_t start_offset, uint32_t count, std::list<Block>& blocks, std::list<Transaction>& txs) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   if (start_offset >= m_blocks.size()) {
@@ -1291,7 +1296,7 @@ bool Blockchain::getBlocks(uint32_t start_offset, uint32_t count, std::list<Bloc
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getBlocks(uint32_t start_offset, uint32_t count, std::list<Block>& blocks) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   if (start_offset >= m_blocks.size()) {
@@ -1304,7 +1309,7 @@ bool Blockchain::getBlocks(uint32_t start_offset, uint32_t count, std::list<Bloc
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::handleGetObjects(NOTIFY_REQUEST_GET_OBJECTS::request& arg, NOTIFY_RESPONSE_GET_OBJECTS::request& rsp) { //Deprecated. Should be removed with CryptoNoteProtocolHandler.
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   rsp.current_blockchain_height = getCurrentBlockchainHeight();
@@ -1336,7 +1341,7 @@ bool Blockchain::handleGetObjects(NOTIFY_REQUEST_GET_OBJECTS::request& arg, NOTI
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getAlternativeBlocks(std::list<Block>& blocks) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   for (auto& alt_bl : m_alternative_chains) {
@@ -1345,12 +1350,12 @@ bool Blockchain::getAlternativeBlocks(std::list<Block>& blocks) {
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 uint32_t Blockchain::getAlternativeBlocksCount() {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return static_cast<uint32_t>(m_alternative_chains.size());
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::add_out_to_get_random_outs(std::vector<std::pair<TransactionIndex, uint16_t>>& amount_outs, COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::outs_for_amount& result_outs, uint64_t amount, size_t i) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   const Transaction& tx = transactionByIndex(amount_outs[i].first).tx;
@@ -1369,7 +1374,7 @@ bool Blockchain::add_out_to_get_random_outs(std::vector<std::pair<TransactionInd
   oen.out_key = boost::get<KeyOutput>(tx.outputs[amount_outs[i].second].target).key;
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 size_t Blockchain::find_end_of_allowed_index(const std::vector<std::pair<TransactionIndex, uint16_t>>& amount_outs) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   if (amount_outs.empty()) {
@@ -1386,7 +1391,7 @@ size_t Blockchain::find_end_of_allowed_index(const std::vector<std::pair<Transac
 
   return 0;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getRandomOutsByAmount(const COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::request& req, COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_AMOUNTS::response& res) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
@@ -1432,7 +1437,7 @@ bool Blockchain::getRandomOutsByAmount(const COMMAND_RPC_GET_RANDOM_OUTPUTS_FOR_
   }
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 uint32_t Blockchain::findBlockchainSupplement(const std::vector<Crypto::Hash>& qblock_ids) {
   assert(!qblock_ids.empty());
   assert(qblock_ids.back() == m_blockIndex.getBlockId(0));
@@ -1443,7 +1448,7 @@ uint32_t Blockchain::findBlockchainSupplement(const std::vector<Crypto::Hash>& q
   m_blockIndex.findSupplement(qblock_ids, blockIndex);
   return blockIndex;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 uint64_t Blockchain::blockDifficulty(size_t i) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   if (!(i < m_blocks.size())) { logger(ERROR, BRIGHT_RED) << "wrong block index i = " << i << " at Blockchain::block_difficulty()"; return false; }
@@ -1452,7 +1457,7 @@ uint64_t Blockchain::blockDifficulty(size_t i) {
 
   return m_blocks[i].cumulative_difficulty - m_blocks[i - 1].cumulative_difficulty;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void Blockchain::print_blockchain(uint64_t start_index, uint64_t end_index) {
   std::stringstream ss;
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
@@ -1472,7 +1477,7 @@ void Blockchain::print_blockchain(uint64_t start_index, uint64_t end_index) {
   logger(INFO, BRIGHT_WHITE) <<
     "Blockchain printed with log level 1";
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void Blockchain::print_blockchain_index() {
   std::stringstream ss;
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
@@ -1486,7 +1491,7 @@ void Blockchain::print_blockchain_index() {
   }
 
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void Blockchain::print_blockchain_outs(const std::string& file) {
   std::stringstream ss;
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
@@ -1508,7 +1513,7 @@ void Blockchain::print_blockchain_outs(const std::string& file) {
       "Failed to write current outputs index to file: " << file;
   }
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 std::vector<Crypto::Hash> Blockchain::findBlockchainSupplement(const std::vector<Crypto::Hash>& remoteBlockIds, size_t maxCount,
   uint32_t& totalBlockCount, uint32_t& startBlockIndex) {
 
@@ -1521,7 +1526,7 @@ std::vector<Crypto::Hash> Blockchain::findBlockchainSupplement(const std::vector
 
   return m_blockIndex.getBlockIds(startBlockIndex, static_cast<uint32_t>(maxCount));
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::haveBlock(const Crypto::Hash& id) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   if (m_blockIndex.hasBlock(id))
@@ -1532,12 +1537,12 @@ bool Blockchain::haveBlock(const Crypto::Hash& id) {
 
   return false;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 size_t Blockchain::getTotalTransactions() {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return m_transactionMap.size();
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getTransactionOutputGlobalIndexes(const Crypto::Hash& tx_id, std::vector<uint32_t>& indexs) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   auto it = m_transactionMap.find(tx_id);
@@ -1555,7 +1560,7 @@ bool Blockchain::getTransactionOutputGlobalIndexes(const Crypto::Hash& tx_id, st
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::get_out_by_msig_gindex(uint64_t amount, uint64_t gindex, MultisignatureOutput& out) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   auto it = m_multisignatureOutputs.find(amount);
@@ -1576,9 +1581,7 @@ bool Blockchain::get_out_by_msig_gindex(uint64_t amount, uint64_t gindex, Multis
   out = boost::get<MultisignatureOutput>(targetOut);
   return true;
 }
-
-
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::checkTransactionInputs(const Transaction& tx, uint32_t& max_used_block_height, Crypto::Hash& max_used_block_id, BlockInfo* tail) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
@@ -1591,7 +1594,7 @@ bool Blockchain::checkTransactionInputs(const Transaction& tx, uint32_t& max_use
   get_block_hash(m_blocks[max_used_block_height].bl, max_used_block_id);
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::haveTransactionKeyImagesAsSpent(const Transaction &tx) {
   for (const auto& in : tx.inputs) {
     if (in.type() == typeid(KeyInput)) {
@@ -1603,12 +1606,12 @@ bool Blockchain::haveTransactionKeyImagesAsSpent(const Transaction &tx) {
 
   return false;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::checkTransactionInputs(const Transaction& tx, uint32_t* pmax_used_block_height) {
   Crypto::Hash tx_prefix_hash = getObjectHash(*static_cast<const TransactionPrefix*>(&tx));
   return checkTransactionInputs(tx, tx_prefix_hash, pmax_used_block_height);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::checkTransactionInputs(const Transaction& tx, const Crypto::Hash& tx_prefix_hash, uint32_t* pmax_used_block_height) {
   size_t inputIndex = 0;
   if (pmax_used_block_height) {
@@ -1650,7 +1653,7 @@ bool Blockchain::checkTransactionInputs(const Transaction& tx, const Crypto::Has
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::is_tx_spendtime_unlocked(uint64_t unlock_time) {
   if (unlock_time < m_currency.maxBlockHeight()) {
     //interpret as block index
@@ -1669,7 +1672,7 @@ bool Blockchain::is_tx_spendtime_unlocked(uint64_t unlock_time) {
 
   return false;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::check_tx_input(const KeyInput& txin, const Crypto::Hash& tx_prefix_hash, const std::vector<Crypto::Signature>& sig, uint32_t* pmax_related_block_height) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
@@ -1728,12 +1731,12 @@ bool Blockchain::check_tx_input(const KeyInput& txin, const Crypto::Hash& tx_pre
 
   return Crypto::check_ring_signature(tx_prefix_hash, txin.keyImage, output_keys, sig.data());
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 uint64_t Blockchain::get_adjusted_time() {
   //TODO: add collecting median time
   return time(NULL);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::check_tx_outputs(const Transaction& tx) const {
   for (TransactionOutput out : tx.outputs) {
     if (out.target.type() == typeid(MultisignatureOutput)) {
@@ -1757,7 +1760,7 @@ bool Blockchain::check_tx_outputs(const Transaction& tx) const {
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::check_block_timestamp_main(const Block& b) {
   if (b.timestamp > get_adjusted_time() + m_currency.blockFutureTimeLimit()) {
     logger(INFO, BRIGHT_WHITE) <<
@@ -1773,7 +1776,7 @@ bool Blockchain::check_block_timestamp_main(const Block& b) {
 
   return check_block_timestamp(std::move(timestamps), b);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::check_block_timestamp(std::vector<uint64_t> timestamps, const Block& b) {
   if (timestamps.size() < m_currency.timestampCheckWindow()) {
     return true;
@@ -1790,7 +1793,7 @@ bool Blockchain::check_block_timestamp(std::vector<uint64_t> timestamps, const B
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::checkBlockVersion(const Block& b, const Crypto::Hash& blockHash) {
   uint32_t height = get_block_height(b);
   const uint8_t expectedBlockVersion = getBlockMajorVersionForHeight(height);
@@ -1808,7 +1811,7 @@ bool Blockchain::checkBlockVersion(const Block& b, const Crypto::Hash& blockHash
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::checkParentBlockSize(const Block& b, const Crypto::Hash& blockHash) {
   if (b.majorVersion >= NEXT_BLOCK_MAJOR) {
     auto serializer = makeParentBlockSerializer(b, false, false);
@@ -1829,7 +1832,7 @@ bool Blockchain::checkParentBlockSize(const Block& b, const Crypto::Hash& blockH
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::checkCumulativeBlockSize(const Crypto::Hash& blockId, size_t cumulativeBlockSize, uint64_t height) {
   size_t maxBlockCumulativeSize = m_currency.maxBlockCumulativeSize(height);
   if (cumulativeBlockSize > maxBlockCumulativeSize) {
@@ -1841,7 +1844,7 @@ bool Blockchain::checkCumulativeBlockSize(const Crypto::Hash& blockId, size_t cu
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 // Returns true, if cumulativeSize is calculated precisely, else returns false.
 bool Blockchain::getBlockCumulativeSize(const Block& block, size_t& cumulativeSize) {
   std::vector<Transaction> blockTxs;
@@ -1855,7 +1858,7 @@ bool Blockchain::getBlockCumulativeSize(const Block& block, size_t& cumulativeSi
 
   return missedTxs.empty();
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 // Precondition: m_blockchain_lock is locked.
 bool Blockchain::update_next_comulative_size_limit() {
   uint8_t nextBlockMajorVersion = getBlockMajorVersionForHeight(static_cast<uint32_t>(m_blocks.size()));
@@ -1872,7 +1875,7 @@ bool Blockchain::update_next_comulative_size_limit() {
   m_current_block_cumul_sz_limit = median * 2;
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::addNewBlock(const Block& bl_, block_verification_context& bvc) {
   //copy block here to let modify block.target
   Block bl = bl_;
@@ -1919,11 +1922,11 @@ bool Blockchain::addNewBlock(const Block& bl_, block_verification_context& bvc) 
 
   return add_result;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 const Blockchain::TransactionEntry& Blockchain::transactionByIndex(TransactionIndex index) {
   return m_blocks[index.block].transactions[index.transaction];
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::pushBlock(const Block& blockData, block_verification_context& bvc, uint32_t height) {
   std::vector<Transaction> transactions;
   if (!loadTransactions(blockData, transactions, height)) {
@@ -1938,7 +1941,7 @@ bool Blockchain::pushBlock(const Block& blockData, block_verification_context& b
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::pushBlock(const Block& blockData, const std::vector<Transaction>& transactions, block_verification_context& bvc) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
@@ -2118,27 +2121,27 @@ bool Blockchain::pushBlock(const Block& blockData, const std::vector<Transaction
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 uint64_t Blockchain::fullDepositAmount() const {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return m_depositIndex.fullDepositAmount();
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 uint64_t Blockchain::depositAmountAtHeight(size_t height) const {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return m_depositIndex.depositAmountAtHeight(static_cast<DepositIndex::DepositHeight>(height));
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 uint64_t Blockchain::fullDepositInterest() const {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return m_depositIndex.fullInterestAmount();
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 uint64_t Blockchain::depositInterestAtHeight(size_t height) const {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return m_depositIndex.depositInterestAtHeight(static_cast<DepositIndex::DepositHeight>(height));
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void Blockchain::pushToDepositIndex(const BlockEntry& block, uint64_t interest) {
   int64_t deposit = 0;
   for (const auto& tx : block.transactions) {
@@ -2161,7 +2164,7 @@ void Blockchain::pushToDepositIndex(const BlockEntry& block, uint64_t interest) 
   }
   m_depositIndex.pushBlock(deposit, interest);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::pushBlock(BlockEntry& block) {
   Crypto::Hash blockHash = get_block_hash(block.bl);
 
@@ -2175,7 +2178,7 @@ bool Blockchain::pushBlock(BlockEntry& block) {
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void Blockchain::popBlock() {
   if (m_blocks.empty()) {
     logger(ERROR, BRIGHT_RED) <<
@@ -2196,7 +2199,7 @@ void Blockchain::popBlock() {
   m_upgradeDetectorv2.blockPopped();
   m_upgradeDetectorv3.blockPopped();
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::pushTransaction(BlockEntry& block, const Crypto::Hash& transactionHash, TransactionIndex transactionIndex) {
   auto result = m_transactionMap.insert(std::make_pair(transactionHash, transactionIndex));
   if (!result.second) {
@@ -2259,7 +2262,7 @@ bool Blockchain::pushTransaction(BlockEntry& block, const Crypto::Hash& transact
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void Blockchain::popTransaction(const Transaction& transaction, const Crypto::Hash& transactionHash) {
   TransactionIndex transactionIndex = m_transactionMap.at(transactionHash);
   for (size_t outputIndex = 0; outputIndex < transaction.outputs.size(); ++outputIndex) {
@@ -2369,7 +2372,7 @@ void Blockchain::popTransaction(const Transaction& transaction, const Crypto::Ha
       "Blockchain consistency broken - cannot find transaction by hash.";
   }
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void Blockchain::popTransactions(const BlockEntry& block, const Crypto::Hash& minerTransactionHash) {
   for (size_t i = 0; i < block.transactions.size() - 1; ++i) {
     popTransaction(block.transactions[block.transactions.size() - 1 - i].tx, block.bl.transactionHashes[block.transactions.size() - 2 - i]);
@@ -2377,7 +2380,7 @@ void Blockchain::popTransactions(const BlockEntry& block, const Crypto::Hash& mi
 
   popTransaction(block.bl.baseTransaction, minerTransactionHash);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::validateInput(const MultisignatureInput& input, const Crypto::Hash& transactionHash, const Crypto::Hash& transactionPrefixHash, const std::vector<Crypto::Signature>& transactionSignatures) {
   assert(input.signatureCount == transactionSignatures.size());
   MultisignatureOutputsContainer::const_iterator amountOutputs = m_multisignatureOutputs.find(input.amount);
@@ -2450,7 +2453,7 @@ bool Blockchain::validateInput(const MultisignatureInput& input, const Crypto::H
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::checkCheckpoints(uint32_t& lastValidCheckpointHeight) {
   std::vector<uint32_t> checkpointHeights = m_checkpoints.getCheckpointHeights();
   for (const auto& checkpointHeight : checkpointHeights) {
@@ -2467,13 +2470,13 @@ bool Blockchain::checkCheckpoints(uint32_t& lastValidCheckpointHeight) {
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void Blockchain::rollbackBlockchainTo(uint32_t height) {
   while (height + 1 < m_blocks.size()) {
     removeLastBlock();
   }
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void Blockchain::removeLastBlock() {
   if (m_blocks.empty()) {
     logger(ERROR, BRIGHT_RED) <<
@@ -2493,7 +2496,7 @@ void Blockchain::removeLastBlock() {
 
   assert(m_blockIndex.size() == m_blocks.size());
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::checkUpgradeHeight(const UpgradeDetector& upgradeDetector) {
   uint32_t upgradeHeight = upgradeDetector.upgradeHeight();
   if (upgradeHeight != UpgradeDetectorBase::UNDEF_HEIGHT && upgradeHeight + 1 < m_blocks.size()) {
@@ -2505,7 +2508,7 @@ bool Blockchain::checkUpgradeHeight(const UpgradeDetector& upgradeDetector) {
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getLowerBound(uint64_t timestamp, uint64_t startOffset, uint32_t& height) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
@@ -2521,12 +2524,12 @@ bool Blockchain::getLowerBound(uint64_t timestamp, uint64_t startOffset, uint32_
   height = static_cast<uint32_t>(std::distance(m_blocks.begin(), bound));
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 std::vector<Crypto::Hash> Blockchain::getBlockIds(uint32_t startHeight, uint32_t maxCount) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return m_blockIndex.getBlockIds(startHeight, maxCount);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getBlockContainingTransaction(const Crypto::Hash& txId, Crypto::Hash& blockId, uint32_t& blockHeight) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   auto it = m_transactionMap.find(txId);
@@ -2538,7 +2541,7 @@ bool Blockchain::getBlockContainingTransaction(const Crypto::Hash& txId, Crypto:
     return true;
   }
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getAlreadyGeneratedCoins(const Crypto::Hash& hash, uint64_t& generatedCoins) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
@@ -2559,7 +2562,7 @@ bool Blockchain::getAlreadyGeneratedCoins(const Crypto::Hash& hash, uint64_t& ge
   logger(DEBUGGING) << "Can't find block with hash " << hash << " to get already generated coins.";
   return false;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getBlockSize(const Crypto::Hash& hash, size_t& size) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
@@ -2580,7 +2583,7 @@ bool Blockchain::getBlockSize(const Crypto::Hash& hash, size_t& size) {
   logger(DEBUGGING) << "Can't find block with hash " << hash << " to get block size.";
   return false;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getMultisigOutputReference(const MultisignatureInput& txInMultisig, std::pair<Crypto::Hash, size_t>& outputReference) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   MultisignatureOutputsContainer::const_iterator amountIter = m_multisignatureOutputs.find(txInMultisig.amount);
@@ -2598,7 +2601,7 @@ bool Blockchain::getMultisigOutputReference(const MultisignatureInput& txInMulti
   outputReference.second = outputIndex.outputIndex;
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::storeBlockchainIndices() {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
@@ -2612,7 +2615,7 @@ bool Blockchain::storeBlockchainIndices() {
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::loadBlockchainIndices() {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
 
@@ -2647,27 +2650,27 @@ bool Blockchain::loadBlockchainIndices() {
   }
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getGeneratedTransactionsNumber(uint32_t height, uint64_t& generatedTransactions) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return m_generatedTransactionsIndex.find(height, generatedTransactions);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getOrphanBlockIdsByHeight(uint32_t height, std::vector<Crypto::Hash>& blockHashes) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return m_orthanBlocksIndex.find(height, blockHashes);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getBlockIdsByTimestamp(uint64_t timestampBegin, uint64_t timestampEnd, uint32_t blocksNumberLimit, std::vector<Crypto::Hash>& hashes, uint32_t& blocksNumberWithinTimestamps) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return m_timestampIndex.find(timestampBegin, timestampEnd, blocksNumberLimit, hashes, blocksNumberWithinTimestamps);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::getTransactionIdsByPaymentId(const Crypto::Hash& paymentId, std::vector<Crypto::Hash>& transactionHashes) {
   std::lock_guard<decltype(m_blockchain_lock)> lk(m_blockchain_lock);
   return m_paymentIdIndex.find(paymentId, transactionHashes);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::loadTransactions(const Block& block, std::vector<Transaction>& transactions, uint32_t height) {
   transactions.resize(block.transactionHashes.size());
   size_t transactionSize;
@@ -2687,7 +2690,7 @@ bool Blockchain::loadTransactions(const Block& block, std::vector<Transaction>& 
   }
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void Blockchain::saveTransactions(const std::vector<Transaction>& transactions, uint32_t height) {
   tx_verification_context context;
   for (size_t i = 0; i < transactions.size(); ++i) {
@@ -2696,24 +2699,24 @@ void Blockchain::saveTransactions(const std::vector<Transaction>& transactions, 
     }
   }
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::addMessageQueue(MessageQueue<BlockchainMessage>& messageQueue) {
   return m_messageQueueList.insert(messageQueue);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::removeMessageQueue(MessageQueue<BlockchainMessage>& messageQueue) {
   return m_messageQueueList.remove(messageQueue);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void Blockchain::sendMessage(const BlockchainMessage& message) {
   for (IntrusiveLinkedList<MessageQueue<BlockchainMessage>>::iterator iter = m_messageQueueList.begin(); iter != m_messageQueueList.end(); ++iter) {
     iter->push(message);
   }
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Blockchain::isBlockInMainChain(const Crypto::Hash& blockId) {
   return m_blockIndex.hasBlock(blockId);
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 }
 
