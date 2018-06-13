@@ -7,34 +7,48 @@
 namespace CryptoNote {
 
 class NewBlockMessage {
+	
 public:
+
   NewBlockMessage(const Crypto::Hash& hash);
   NewBlockMessage() = default;
   void get(Crypto::Hash& hash) const;
+  
 private:
+
   Crypto::Hash blockHash;
 };
 
 class NewAlternativeBlockMessage {
+	
 public:
+
   NewAlternativeBlockMessage(const Crypto::Hash& hash);
   NewAlternativeBlockMessage() = default;
   void get(Crypto::Hash& hash) const;
+  
 private:
+
   Crypto::Hash blockHash;
 };
 
 class ChainSwitchMessage {
+	
 public:
+
   ChainSwitchMessage(std::vector<Crypto::Hash>&& hashes);
   ChainSwitchMessage(const ChainSwitchMessage& other);
   void get(std::vector<Crypto::Hash>& hashes) const;
+  
 private:
+
   std::vector<Crypto::Hash> blocksFromCommonRoot;
 };
 
 class BlockchainMessage {
+	
 public:
+
   enum class MessageType {
     NEW_BLOCK_MESSAGE,
     NEW_ALTERNATIVE_BLOCK_MESSAGE,
@@ -54,7 +68,9 @@ public:
   bool getNewBlockHash(Crypto::Hash& hash) const;
   bool getNewAlternativeBlockHash(Crypto::Hash& hash) const;
   bool getChainSwitch(std::vector<Crypto::Hash>& hashes) const;
+  
 private:
+
   const MessageType type;
 
   union {

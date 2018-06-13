@@ -17,7 +17,9 @@ inline size_t paymentIdHash(const Crypto::Hash& paymentId) {
 }
 
 class PaymentIdIndex {
+	
 public:
+
   PaymentIdIndex(bool enabled);
 
   bool add(const Transaction& transaction);
@@ -31,13 +33,17 @@ public:
   void serialize(Archive& archive, unsigned int version) {
     archive & index;
   }
+  
 private:
+
   std::unordered_multimap<Crypto::Hash, Crypto::Hash, std::function<decltype(paymentIdHash)>> index;
   bool enabled = false;
 };
 
 class TimestampBlocksIndex {
+	
 public:
+
   TimestampBlocksIndex(bool enabled);
 
   bool add(uint64_t timestamp, const Crypto::Hash& hash);
@@ -51,13 +57,17 @@ public:
   void serialize(Archive& archive, unsigned int version) {
     archive & index;
   }
+  
 private:
+
   std::multimap<uint64_t, Crypto::Hash> index;
   bool enabled = false;
 };
 
 class TimestampTransactionsIndex {
+	
 public:
+
   TimestampTransactionsIndex(bool enabled);
 
   bool add(uint64_t timestamp, const Crypto::Hash& hash);
@@ -71,13 +81,17 @@ public:
   void serialize(Archive& archive, unsigned int version) {
     archive & index;
   }
+  
 private:
+
   std::multimap<uint64_t, Crypto::Hash> index;
   bool enabled = false;
 };
 
 class GeneratedTransactionsIndex {
+	
 public:
+
   GeneratedTransactionsIndex(bool enabled);
 
   bool add(const Block& block);
@@ -92,21 +106,27 @@ public:
     archive & index;
     archive & lastGeneratedTxNumber;
   }
+  
 private:
+
   std::unordered_map<uint32_t, uint64_t> index;
   uint64_t lastGeneratedTxNumber;
   bool enabled = false;
 };
 
 class OrphanBlocksIndex {
+	
 public:
+
   OrphanBlocksIndex(bool enabled);
 
   bool add(const Block& block);
   bool remove(const Block& block);
   bool find(uint32_t height, std::vector<Crypto::Hash>& blockHashes);
   void clear();
+  
 private:
+
   std::unordered_multimap<uint32_t, Crypto::Hash> index;
   bool enabled = false;
 };

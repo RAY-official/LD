@@ -14,7 +14,7 @@ namespace {
 
 PaymentIdIndex::PaymentIdIndex(bool _enabled) : enabled(_enabled), index(DEFAULT_BUCKET_COUNT, paymentIdHash) {
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool PaymentIdIndex::add(const Transaction& transaction) {
   if (!enabled) {
     return false;
@@ -30,7 +30,7 @@ bool PaymentIdIndex::add(const Transaction& transaction) {
 
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool PaymentIdIndex::remove(const Transaction& transaction) {
   if (!enabled) {
     return false;
@@ -52,7 +52,7 @@ bool PaymentIdIndex::remove(const Transaction& transaction) {
 
   return false;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool PaymentIdIndex::find(const Crypto::Hash& paymentId, std::vector<Crypto::Hash>& transactionHashes) {
   if (!enabled) {
     throw std::runtime_error("Payment id index disabled.");
@@ -66,14 +66,13 @@ bool PaymentIdIndex::find(const Crypto::Hash& paymentId, std::vector<Crypto::Has
   }
   return found;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void PaymentIdIndex::clear() {
   if (enabled) {
     index.clear();
   }
 }
-
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void PaymentIdIndex::serialize(ISerializer& s) {
   if (!enabled) {
     throw std::runtime_error("Payment id index disabled.");
@@ -81,10 +80,10 @@ void PaymentIdIndex::serialize(ISerializer& s) {
 
   s(index, "index");
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 TimestampBlocksIndex::TimestampBlocksIndex(bool _enabled) : enabled(_enabled) {
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool TimestampBlocksIndex::add(uint64_t timestamp, const Crypto::Hash& hash) {
   if (!enabled) {
     return false;
@@ -93,7 +92,7 @@ bool TimestampBlocksIndex::add(uint64_t timestamp, const Crypto::Hash& hash) {
   index.emplace(timestamp, hash);
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool TimestampBlocksIndex::remove(uint64_t timestamp, const Crypto::Hash& hash) {
   if (!enabled) {
     return false;
@@ -109,7 +108,7 @@ bool TimestampBlocksIndex::remove(uint64_t timestamp, const Crypto::Hash& hash) 
 
   return false;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool TimestampBlocksIndex::find(uint64_t timestampBegin, uint64_t timestampEnd, uint32_t hashesNumberLimit, std::vector<Crypto::Hash>& hashes, uint32_t& hashesNumberWithinTimestamps) {
   if (!enabled) {
     throw std::runtime_error("Timestamp block index disabled.");
@@ -131,13 +130,13 @@ bool TimestampBlocksIndex::find(uint64_t timestampBegin, uint64_t timestampEnd, 
   }
   return hashesNumber > 0;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void TimestampBlocksIndex::clear() {
   if (enabled) {
     index.clear();
   }
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void TimestampBlocksIndex::serialize(ISerializer& s) {
   if (!enabled) {
     throw std::runtime_error("Timestamp block index disabled.");
@@ -145,10 +144,10 @@ void TimestampBlocksIndex::serialize(ISerializer& s) {
 
   s(index, "index");
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 TimestampTransactionsIndex::TimestampTransactionsIndex(bool _enabled) : enabled(_enabled) {
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool TimestampTransactionsIndex::add(uint64_t timestamp, const Crypto::Hash& hash) {
   if (!enabled) {
     return false;
@@ -157,7 +156,7 @@ bool TimestampTransactionsIndex::add(uint64_t timestamp, const Crypto::Hash& has
   index.emplace(timestamp, hash);
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool TimestampTransactionsIndex::remove(uint64_t timestamp, const Crypto::Hash& hash) {
   if (!enabled) {
     return false;
@@ -173,7 +172,7 @@ bool TimestampTransactionsIndex::remove(uint64_t timestamp, const Crypto::Hash& 
 
   return false;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool TimestampTransactionsIndex::find(uint64_t timestampBegin, uint64_t timestampEnd, uint64_t hashesNumberLimit, std::vector<Crypto::Hash>& hashes, uint64_t& hashesNumberWithinTimestamps) {
   if (!enabled) {
     throw std::runtime_error("Timestamp transactions index disabled.");
@@ -198,13 +197,13 @@ bool TimestampTransactionsIndex::find(uint64_t timestampBegin, uint64_t timestam
 
   return hashesNumber > 0;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void TimestampTransactionsIndex::clear() {
   if (enabled) {
     index.clear();
   }
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void TimestampTransactionsIndex::serialize(ISerializer& s) {
   if (!enabled) {
     throw std::runtime_error("Timestamp transactions index disabled.");
@@ -212,11 +211,10 @@ void TimestampTransactionsIndex::serialize(ISerializer& s) {
 
   s(index, "index");
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 GeneratedTransactionsIndex::GeneratedTransactionsIndex(bool _enabled) : lastGeneratedTxNumber(0), enabled(_enabled) {
-
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool GeneratedTransactionsIndex::add(const Block& block) {
   if (!enabled) {
     return false;
@@ -234,7 +232,7 @@ bool GeneratedTransactionsIndex::add(const Block& block) {
   }
   return status;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool GeneratedTransactionsIndex::remove(const Block& block) {
   if (!enabled) {
     return false;
@@ -260,7 +258,7 @@ bool GeneratedTransactionsIndex::remove(const Block& block) {
   
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool GeneratedTransactionsIndex::find(uint32_t height, uint64_t& generatedTransactions) {
   if (!enabled) {
     throw std::runtime_error("Generated transactions index disabled.");
@@ -276,13 +274,13 @@ bool GeneratedTransactionsIndex::find(uint32_t height, uint64_t& generatedTransa
   generatedTransactions = iter->second;
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void GeneratedTransactionsIndex::clear() {
   if (enabled) {
     index.clear();
   }
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void GeneratedTransactionsIndex::serialize(ISerializer& s) {
   if (!enabled) {
     throw std::runtime_error("Generated transactions index disabled.");
@@ -291,10 +289,10 @@ void GeneratedTransactionsIndex::serialize(ISerializer& s) {
   s(index, "index");
   s(lastGeneratedTxNumber, "lastGeneratedTxNumber");
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 OrphanBlocksIndex::OrphanBlocksIndex(bool _enabled) : enabled(_enabled) {
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool OrphanBlocksIndex::add(const Block& block) {
   if (!enabled) {
     return false;
@@ -305,7 +303,7 @@ bool OrphanBlocksIndex::add(const Block& block) {
   index.emplace(blockHeight, blockHash);
   return true;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool OrphanBlocksIndex::remove(const Block& block) {
   if (!enabled) {
     return false;
@@ -323,7 +321,7 @@ bool OrphanBlocksIndex::remove(const Block& block) {
 
   return false;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool OrphanBlocksIndex::find(uint32_t height, std::vector<Crypto::Hash>& blockHashes) {
   if (!enabled) {
     throw std::runtime_error("Orphan blocks index disabled.");
@@ -340,11 +338,11 @@ bool OrphanBlocksIndex::find(uint32_t height, std::vector<Crypto::Hash>& blockHa
   }
   return found;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 void OrphanBlocksIndex::clear() {
   if (enabled) {
     index.clear();
   }
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 }

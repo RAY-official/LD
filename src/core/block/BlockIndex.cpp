@@ -11,7 +11,7 @@ namespace CryptoNote {
 
     return m_container[static_cast<size_t>(height)];
   }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
   std::vector<Crypto::Hash> BlockIndex::getBlockIds(uint32_t startBlockIndex, uint32_t maxCount) const {
     std::vector<Crypto::Hash> result;
     if (startBlockIndex >= m_container.size()) {
@@ -26,7 +26,7 @@ namespace CryptoNote {
 
     return result;
   }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
   bool BlockIndex::findSupplement(const std::vector<Crypto::Hash>& ids, uint32_t& offset) const {
     for (const auto& id : ids) {
       if (getBlockHeight(id, offset)) {
@@ -36,7 +36,7 @@ namespace CryptoNote {
 
     return false;
   }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
   std::vector<Crypto::Hash> BlockIndex::buildSparseChain(const Crypto::Hash& startBlockId) const {
     assert(m_index.count(startBlockId) > 0);
 
@@ -55,12 +55,12 @@ namespace CryptoNote {
 
     return result;
   }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
   Crypto::Hash BlockIndex::getTailId() const {
     assert(!m_container.empty());
     return m_container.back();
   }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
   void BlockIndex::serialize(ISerializer& s) {
     if (s.type() == ISerializer::INPUT) {
       readSequence<Crypto::Hash>(std::back_inserter(m_container), "index", s);
@@ -68,4 +68,5 @@ namespace CryptoNote {
       writeSequence<Crypto::Hash>(m_container.begin(), m_container.end(), "index", s);
     }
   }
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------// 
 }

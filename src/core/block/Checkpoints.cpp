@@ -5,9 +5,9 @@
 using namespace Logging;
 
 namespace CryptoNote {
-//---------------------------------------------------------------------------
+
 Checkpoints::Checkpoints(Logging::ILogger &log) : logger(log, "checkpoints") {}
-//---------------------------------------------------------------------------
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Checkpoints::add_checkpoint(uint32_t height, const std::string &hash_str) {
   Crypto::Hash h = NULL_HASH;
 
@@ -24,7 +24,7 @@ bool Checkpoints::add_checkpoint(uint32_t height, const std::string &hash_str) {
   m_points[height] = h;
   return true;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 const boost::regex linesregx("\\r\\n|\\n\\r|\\n|\\r");
 const boost::regex fieldsregx(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
 bool Checkpoints::load_checkpoints_from_file(const std::string& fileName) {
@@ -69,11 +69,11 @@ bool Checkpoints::load_checkpoints_from_file(const std::string& fileName) {
   logger(Logging::INFO) << "Loaded " << count << " checkpoint(s) from " << fileName;
   return true;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Checkpoints::is_in_checkpoint_zone(uint32_t  height) const {
   return !m_points.empty() && (height <= (--m_points.end())->first);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Checkpoints::check_block(uint32_t  height, const Crypto::Hash &h,
                               bool &is_a_checkpoint) const {
   auto it = m_points.find(height);
@@ -92,12 +92,12 @@ bool Checkpoints::check_block(uint32_t  height, const Crypto::Hash &h,
     return false;
   }
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Checkpoints::check_block(uint32_t  height, const Crypto::Hash &h) const {
   bool ignored;
   return check_block(height, h, ignored);
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 bool Checkpoints::is_alternative_block_allowed(uint32_t  blockchain_height,
                                                uint32_t  block_height) const {
   if (0 == block_height)
@@ -112,7 +112,7 @@ bool Checkpoints::is_alternative_block_allowed(uint32_t  blockchain_height,
   uint32_t  checkpoint_height = it->first;
   return checkpoint_height < block_height;
 }
-//---------------------------------------------------------------------------
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 std::vector<uint32_t> Checkpoints::getCheckpointHeights() const {
   std::vector<uint32_t> checkpointHeights;
   checkpointHeights.reserve(m_points.size());
@@ -122,5 +122,5 @@ std::vector<uint32_t> Checkpoints::getCheckpointHeights() const {
 
   return checkpointHeights;
 }
-
+//------------------------------------------------------------- Seperator Code -------------------------------------------------------------//
 }

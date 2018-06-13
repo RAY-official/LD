@@ -36,7 +36,9 @@ namespace CryptoNote {
 
   using CryptoNote::BlockInfo;
   class Blockchain : public CryptoNote::ITransactionValidator {
+	  
   public:
+  
     Blockchain(const Currency& currency, tx_memory_pool& tx_pool, Logging::ILogger& logger, bool blockchainIndexesEnabled);
 
     bool addObserver(IBlockchainStorageObserver* observer);
@@ -320,6 +322,7 @@ namespace CryptoNote {
   };
 
   class LockedBlockchainStorage: boost::noncopyable {
+	  
   public:
 
     LockedBlockchainStorage(Blockchain& bc)
