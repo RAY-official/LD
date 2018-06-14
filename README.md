@@ -40,6 +40,10 @@ cd modules/cmake && ./bootstrap && make && make install
 11. happy used
 12. contributor helper : src/contrib.hpp
 
+# Super Nodes Feature
+
+https://github.com/FndNur1Labs/CryptonoteEvo/wiki/Super-Nodes
+
 # Donation For Support
 
 Bitcoin : 1P7ySThfyV4K3da5eQcbm8GWk33ER4DdKi
@@ -65,3 +69,5 @@ Bitcoin Diamond : 1553PvXLXQbMXZKEd6HnnsnNC9KXgpGi4z
 Waves : 3P9gJLwvaRHKw1gjwE5RWQSj3cojEmzaopg
 
 ZCoin : aHYGwDMpNcHM8eAttddbgVkVy7uNtCvdNV
+
+Main Page : https://github.com/FndNur1Labs/CryptonoteEvo
