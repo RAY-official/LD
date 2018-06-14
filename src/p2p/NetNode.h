@@ -14,7 +14,7 @@
 #include <System/TcpListener.h>
 
 #include "OnceInInterval.h"
-#include "core/Core.h"
+#include "deluxe/loco.h"
 #include "protocol/CryptoNoteProtocolHandler.h"
 #include "common/CommandLine.h"
 #include "log/LoggerRef.h"

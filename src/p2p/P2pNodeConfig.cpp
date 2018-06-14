@@ -1,5 +1,5 @@
 #include "P2pNodeConfig.h"
-#include "core/Core.h"
+#include "deluxe/loco.h"
 
 #include <CryptoNoteConfig.h>
 

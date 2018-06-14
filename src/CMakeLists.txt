@@ -85,6 +85,8 @@ target_link_libraries(miner base rpc System http log common crypto ${Boost_LIBRA
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR APPLE AND NOT ANDROID)
   target_link_libraries(simple_wallet -lresolv)
+  target_link_libraries(daemon -lresolv)
+  target_link_libraries(payment_gate_services -lresolv)
 endif ()
 
 add_dependencies(rpc version)
