@@ -38,3 +38,18 @@ Release notes 3.0.3
   - improve wallet from bytecoin models
   - crypto patch from karbo
   - upgrade core system with PoS and MN support
+
+Release notes 3.0.4
+
+- checkpoint 6/14/2018
+  - improve hash cores
+  - improve masternodes
+  - improve PoS
+  - super nodes increase rpc value
+  - remotes checkpoint
+  - dust test transaction
+  - long hash stop for solo on SN[Super Nodes][like gpu solos]
+  - block point added
+  - parent block fixed
+  - added confirmation log rpc
+  - security increases
