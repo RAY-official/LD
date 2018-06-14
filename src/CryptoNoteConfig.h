@@ -94,7 +94,7 @@ const char     CRYPTONOTE_NAME[]                             = "Cryptonote";
 const char     GENESIS_COINBASE_TX_HEX[]                     = "010a01ff0001c0843d029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd0880712101641826fa1e022159cec827e76e40b0ac18444dc77cc0a6f860d72964a4dd596d";
 
 const uint32_t GENESIS_NONCE                                 = 70;
-const uint64_t GENESIS_TIMESTAMP                             = 1528086815;
+const uint64_t GENESIS_TIMESTAMP                             = 1528966182;
 
 const uint8_t  CURRENT_TRANSACTION_VERSION                   = 1;
 const uint8_t  CURRENT_BLOCK_MAJOR                           = 1; //if put current 2 then next is 3 and soon....
